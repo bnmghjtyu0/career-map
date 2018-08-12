@@ -56,11 +56,13 @@
       <div class="container h-100">
         <div class="row align-items-stretch h-100">
           <div class="mapList col-sm-3">
+            前端年資:{{allOfficeDate}}
             <ul>
               <li v-for="job in jobInfo">
                 {{job.name}}
                 <a :href="job.web" target="_blank">官網</a>
                 <a href="https://www.chung-yo.com/" v-if="job.name === '中友百貨' ">中友購物網</a>
+                <p>時間: {{job["take office date"] }} - {{job["leave office date"]}}</p>
               </li>
 
             </ul>
@@ -100,8 +102,8 @@
           "lng": 120.6469101
         },
         "title": '網頁設計師',
-        "take office date": 20150806,
-        "leave office date": 20160509,
+        "take office date": "2015/09",
+        "leave office date": "2016/05",
         "seniority": '9個月',
         "web": 'http://www.elegend.com.tw/'
       },
@@ -113,8 +115,8 @@
           "lng": 120.6559783
         },
         "title": '前端設計',
-        "take office date": 20160509,
-        "leave office date": 20180803,
+        "take office date": "2016/05",
+        "leave office date": "2018/08",
         "seniority": '2年2個月',
         "web": "http://www.i-link.tw/"
       },
@@ -126,8 +128,8 @@
           "lng": 120.6791169
         },
         "title": '前端工程師',
-        "take office date": 20180805,
-        "leave office date": '至今',
+        "take office date": "2018/08",
+        "leave office date": "2018/09",
         "seniority": '至今',
         "web": "https://www.chungyo.com.tw/"
       }
@@ -244,7 +246,22 @@
   <script>
     const vm = new Vue({
       el: '#app',
-      data: {}
+      data: {},
+      computed: {
+        allOfficeDate() {
+          var all = jobInfo.reduce(function (prev, curr) {
+            // 如果時間是至今，回傳現在日期
+            // if (curr["leave office date"] === "至今") {
+            //   return `${new Date().getFullYear()}/${new Date().getMonth() + 1}`
+            // }
+            let from = curr["take office date"].slice(0, 4) * 365 * 24 * 60 * 60 + curr["take office date"].slice(5, 7) * 30 * 24 * 60 * 60
+            let to = curr["leave office date"].slice(0, 4) * 365 * 24 * 60 * 60 + curr["leave office date"].slice(5, 7) * 30 * 24 * 60 * 60
+            let time = (to - from) / 60 / 60 / 24 / 30;
+            return [...prev, time]
+          }, [])
+          return `${parseInt((all[0] + all[1] + all[2]) / 12)}年${parseInt((all[0] + all[1] + all[2]) / 30)}月`
+        }
+      }
     })
   </script>
 </body>
