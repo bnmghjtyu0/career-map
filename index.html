@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+    crossorigin="anonymous">
+  <style>
+    /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+
+    #map {
+      height: 100%;
+    }
+
+    /* Optional: Makes the sample page fill the window. */
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    .mapBox {
+      height: 500px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" style="background-color: #e3f2fd;">
+      <div class="container">
+        <a class="navbar-brand" href="#">柏錩的職涯地圖</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText"
+          aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarText">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="#">Home
+                <span class="sr-only">(current)</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <section class="mapBox">
+      <div class="container h-100">
+        <div class="row align-items-stretch h-100">
+          <div class="mapList col-sm-3">
+            <ul>
+              <li v-for="job in jobInfo">
+                {{job.name}}
+                <a :href="job.web" target="_blank">官網</a>
+                <a href="https://www.chung-yo.com/" v-if="job.name === '中友百貨' ">中友購物網</a>
+              </li>
+
+            </ul>
+          </div>
+          <div class="col-sm-9">
+            <div id="map"></div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <div class="container">
+      <p>練習: 玩 goolge api</p>
+      <p>目標: 使用 google 地圖，紀錄上班時間與地點和附近的美食</p>
+      <a href="https://developers.google.com/maps/documentation/javascript/tutorial?hl=zh-TW" target="_blank">google map api</a>
+    </div>
+
+  </div>
+  <!-- bootstrap js-->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+    crossorigin="anonymous"></script>
+
+
+  <!-- google-map js-->
+  <script>
+    var jobInfo = [
+      {
+        "id": 1,
+        "name": '傳奇數位',
+        "location": {
+          "lat": 24.1424269,
+          "lng": 120.6469101
+        },
+        "title": '網頁設計師',
+        "take office date": 20150806,
+        "leave office date": 20160509,
+        "seniority": '9個月',
+        "web": 'http://www.elegend.com.tw/'
+      },
+      {
+        "id": 2,
+        "name": '富研智醫(皚霖資訊)',
+        "location": {
+          "lat": 24.1505821,
+          "lng": 120.6559783
+        },
+        "title": '前端設計',
+        "take office date": 20160509,
+        "leave office date": 20180803,
+        "seniority": '2年2個月',
+        "web": "http://www.i-link.tw/"
+      },
+      {
+        "id": 3,
+        "name": '中友百貨',
+        "location": {
+          "lat": 24.1727925,
+          "lng": 120.6791169
+        },
+        "title": '前端工程師',
+        "take office date": 20180805,
+        "leave office date": '至今',
+        "seniority": '至今',
+        "web": "https://www.chungyo.com.tw/"
+      }
+
+    ]
+    var map;
+    var markers;
+    var uluru;
+    var markerCluster;
+    var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    function initMap() {
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: 24.1505821, lng: 120.6559783 },
+        zoom: 13,
+        styles: [
+          { elementType: 'geometry', stylers: [{ color: '#242f3e' }] },
+          { elementType: 'labels.text.stroke', stylers: [{ color: '#242f3e' }] },
+          { elementType: 'labels.text.fill', stylers: [{ color: '#746855' }] },
+          {
+            featureType: 'administrative.locality',
+            elementType: 'labels.text.fill',
+            stylers: [{ color: '#d59563' }]
+          },
+          {
+            featureType: 'poi',
+            elementType: 'labels.text.fill',
+            stylers: [{ color: '#d59563' }]
+          },
+          {
+            featureType: 'poi.park',
+            elementType: 'geometry',
+            stylers: [{ color: '#263c3f' }]
+          },
+          {
+            featureType: 'poi.park',
+            elementType: 'labels.text.fill',
+            stylers: [{ color: '#6b9a76' }]
+          },
+          {
+            featureType: 'road',
+            elementType: 'geometry',
+            stylers: [{ color: '#38414e' }]
+          },
+          {
+            featureType: 'road',
+            elementType: 'geometry.stroke',
+            stylers: [{ color: '#212a37' }]
+          },
+          {
+            featureType: 'road',
+            elementType: 'labels.text.fill',
+            stylers: [{ color: '#9ca5b3' }]
+          },
+          {
+            featureType: 'road.highway',
+            elementType: 'geometry',
+            stylers: [{ color: '#746855' }]
+          },
+          {
+            featureType: 'road.highway',
+            elementType: 'geometry.stroke',
+            stylers: [{ color: '#1f2835' }]
+          },
+          {
+            featureType: 'road.highway',
+            elementType: 'labels.text.fill',
+            stylers: [{ color: '#f3d19c' }]
+          },
+          {
+            featureType: 'transit',
+            elementType: 'geometry',
+            stylers: [{ color: '#2f3948' }]
+          },
+          {
+            featureType: 'transit.station',
+            elementType: 'labels.text.fill',
+            stylers: [{ color: '#d59563' }]
+          },
+          {
+            featureType: 'water',
+            elementType: 'geometry',
+            stylers: [{ color: '#17263c' }]
+          },
+          {
+            featureType: 'water',
+            elementType: 'labels.text.fill',
+            stylers: [{ color: '#515c6d' }]
+          },
+          {
+            featureType: 'water',
+            elementType: 'labels.text.stroke',
+            stylers: [{ color: '#17263c' }]
+          }
+        ]
+      });
+      markers = jobInfo.map(function (item, i) {
+        return new google.maps.Marker({
+          position: item.location,
+          label: `${jobInfo[i % jobInfo.length].id}.${jobInfo[i % jobInfo.length].name}`
+        });
+      });
+      markerCluster = new MarkerClusterer(map, markers,
+        { imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m' });
+    }
+  </script>
+  <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBaXRfSzLMj5yhzOxOnKWYTZ00bVozr0vM&callback=initMap" async
+    defer></script>
+
+
+  <!-- vue -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.min.js"></script>
+  <script>
+    const vm = new Vue({
+      el: '#app',
+      data: {}
+    })
+  </script>
+</body>
+
+</html>
