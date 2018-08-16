@@ -8,6 +8,7 @@
   <title>Document</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
     crossorigin="anonymous">
+  <link rel="stylesheet" href="css/main.css">
   <style>
     /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
@@ -51,7 +52,23 @@
         </div>
       </div>
     </nav>
-
+    <h4>功能</h4>
+    <ul>
+      <li>
+        <h4>google marker</h4>
+      </li>
+      <li>
+        <h4>切換白天與黑夜</h4>
+        <!-- Rounded switch -->
+        <label class="switch">
+          <input type="checkbox" v-on:click="isis(isChecked)" v-model="isChecked">
+          <span class="slider round"></span>
+        </label>
+      </li>
+      <li>
+        <h4>定位</h4>
+      </li>
+    </ul>
     <section class="mapBox">
       <div class="container h-100">
         <div class="row align-items-stretch h-100">
@@ -72,16 +89,14 @@
           </div>
         </div>
       </div>
-
     </section>
-
     <div class="container">
       <p>練習: 玩 goolge api</p>
       <p>目標: 使用 google 地圖，紀錄上班時間與地點和附近的美食</p>
       <a href="https://developers.google.com/maps/documentation/javascript/tutorial?hl=zh-TW" target="_blank">google map api</a>
     </div>
-
   </div>
+
   <!-- bootstrap js-->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
     crossorigin="anonymous"></script>
@@ -90,167 +105,96 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
     crossorigin="anonymous"></script>
 
-
-  <!-- google-map js-->
-  <script>
-    var jobInfo = [
-      {
-        "id": 1,
-        "name": '傳奇數位',
-        "location": {
-          "lat": 24.1424269,
-          "lng": 120.6469101
-        },
-        "title": '網頁設計師',
-        "take office date": "2015/09",
-        "leave office date": "2016/05",
-        "seniority": '9個月',
-        "web": 'http://www.elegend.com.tw/'
-      },
-      {
-        "id": 2,
-        "name": '富研智醫(皚霖資訊)',
-        "location": {
-          "lat": 24.1505821,
-          "lng": 120.6559783
-        },
-        "title": '前端設計',
-        "take office date": "2016/05",
-        "leave office date": "2018/08",
-        "seniority": '2年2個月',
-        "web": "http://www.i-link.tw/"
-      },
-      {
-        "id": 3,
-        "name": '中友百貨',
-        "location": {
-          "lat": 24.1727925,
-          "lng": 120.6791169
-        },
-        "title": '前端工程師',
-        "take office date": "2018/08",
-        "leave office date": "2018/09",
-        "seniority": '至今',
-        "web": "https://www.chungyo.com.tw/"
-      }
-
-    ]
-    var map;
-    var markers;
-    var uluru;
-    var markerCluster;
-    var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    function initMap() {
-      map = new google.maps.Map(document.getElementById('map'), {
-        center: { lat: 24.1505821, lng: 120.6559783 },
-        zoom: 13,
-        styles: [
-          { elementType: 'geometry', stylers: [{ color: '#242f3e' }] },
-          { elementType: 'labels.text.stroke', stylers: [{ color: '#242f3e' }] },
-          { elementType: 'labels.text.fill', stylers: [{ color: '#746855' }] },
-          {
-            featureType: 'administrative.locality',
-            elementType: 'labels.text.fill',
-            stylers: [{ color: '#d59563' }]
-          },
-          {
-            featureType: 'poi',
-            elementType: 'labels.text.fill',
-            stylers: [{ color: '#d59563' }]
-          },
-          {
-            featureType: 'poi.park',
-            elementType: 'geometry',
-            stylers: [{ color: '#263c3f' }]
-          },
-          {
-            featureType: 'poi.park',
-            elementType: 'labels.text.fill',
-            stylers: [{ color: '#6b9a76' }]
-          },
-          {
-            featureType: 'road',
-            elementType: 'geometry',
-            stylers: [{ color: '#38414e' }]
-          },
-          {
-            featureType: 'road',
-            elementType: 'geometry.stroke',
-            stylers: [{ color: '#212a37' }]
-          },
-          {
-            featureType: 'road',
-            elementType: 'labels.text.fill',
-            stylers: [{ color: '#9ca5b3' }]
-          },
-          {
-            featureType: 'road.highway',
-            elementType: 'geometry',
-            stylers: [{ color: '#746855' }]
-          },
-          {
-            featureType: 'road.highway',
-            elementType: 'geometry.stroke',
-            stylers: [{ color: '#1f2835' }]
-          },
-          {
-            featureType: 'road.highway',
-            elementType: 'labels.text.fill',
-            stylers: [{ color: '#f3d19c' }]
-          },
-          {
-            featureType: 'transit',
-            elementType: 'geometry',
-            stylers: [{ color: '#2f3948' }]
-          },
-          {
-            featureType: 'transit.station',
-            elementType: 'labels.text.fill',
-            stylers: [{ color: '#d59563' }]
-          },
-          {
-            featureType: 'water',
-            elementType: 'geometry',
-            stylers: [{ color: '#17263c' }]
-          },
-          {
-            featureType: 'water',
-            elementType: 'labels.text.fill',
-            stylers: [{ color: '#515c6d' }]
-          },
-          {
-            featureType: 'water',
-            elementType: 'labels.text.stroke',
-            stylers: [{ color: '#17263c' }]
-          }
-        ]
-      });
-      markers = jobInfo.map(function (item, i) {
-        return new google.maps.Marker({
-          position: item.location,
-          label: `${jobInfo[i % jobInfo.length].id}.${jobInfo[i % jobInfo.length].name}`
-        });
-      });
-      markerCluster = new MarkerClusterer(map, markers,
-        { imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m' });
-    }
-  </script>
+  <!-- google map -->
   <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
   </script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBaXRfSzLMj5yhzOxOnKWYTZ00bVozr0vM&callback=initMap" async
-    defer></script>
-
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBaXRfSzLMj5yhzOxOnKWYTZ00bVozr0vM"></script>
 
   <!-- vue -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.min.js"></script>
+  <!-- vue plugin axios -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+
   <script>
     const vm = new Vue({
       el: '#app',
-      data: {},
+      data: {
+        isChecked: false,
+        jobInfo: [
+          {
+            "id": 1,
+            "name": "傳奇數位",
+            "location": {
+              "lat": 24.1424269,
+              "lng": 120.6469101
+            },
+            "title": "網頁設計師",
+            "take office date": "2015/09",
+            "leave office date": "2016/05",
+            "seniority": "9個月",
+            "web": "http://www.elegend.com.tw/"
+          },
+          {
+            "id": 2,
+            "name": "富研智醫(皚霖資訊)",
+            "location": {
+              "lat": 24.1505821,
+              "lng": 120.6559783
+            },
+            "title": "前端設計",
+            "take office date": "2016/05",
+            "leave office date": "2018/08",
+            "seniority": "2年2個月",
+            "web": "http://www.i-link.tw/"
+          },
+          {
+            "id": 3,
+            "name": "中友百貨",
+            "location": {
+              "lat": 24.1727925,
+              "lng": 120.6791169
+            },
+            "title": "前端工程師",
+            "take office date": "2018/08",
+            "leave office date": "2018/09",
+            "seniority": "至今",
+            "web": "https://www.chungyo.com.tw/"
+          }
+        ]
+      },
+      methods: {
+        isis: function (el) {
+          if (el === true) {
+            this.initMap()
+          } else {
+            this.initMap()
+          }
+        },
+        initMap: function () {
+          var map;
+          var markers;
+          var uluru = { lat: 24.1505821, lng: 120.6559783 };
+          var markerCluster;
+          var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+          map = new google.maps.Map(document.getElementById('map'), {
+            center: { lat: 24.1505821, lng: 120.6559783 },
+            zoom: 13,
+            styles: this.isCheckedFn
+          });
+          markers = this.jobInfo.map((item, i) => {
+            return new google.maps.Marker({
+              position: item.location,
+              label: `${this.jobInfo[i % this.jobInfo.length].id}.${this.jobInfo[i % this.jobInfo.length].name}`
+            });
+          });
+          markerCluster = new MarkerClusterer(map, markers,
+            { imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m' });
+        }
+      },
       computed: {
         allOfficeDate() {
-          var all = jobInfo.reduce(function (prev, curr) {
-            // 如果時間是至今，回傳現在日期
+          var all = this.jobInfo.reduce(function (prev, curr) {
+            // 如果是至今，回傳現在日期
             // if (curr["leave office date"] === "至今") {
             //   return `${new Date().getFullYear()}/${new Date().getMonth() + 1}`
             // }
@@ -260,7 +204,98 @@
             return [...prev, time]
           }, [])
           return `${parseInt((all[0] + all[1] + all[2]) / 12)}年${parseInt((all[0] + all[1] + all[2]) / 30)}月`
+        },
+        isCheckedFn() {
+          if (this.isChecked === true) return null
+          else {
+            return [
+              { elementType: 'geometry', stylers: [{ color: '#242f3e' }] },
+              { elementType: 'labels.text.stroke', stylers: [{ color: '#242f3e' }] },
+              { elementType: 'labels.text.fill', stylers: [{ color: '#746855' }] },
+              {
+                featureType: 'administrative.locality',
+                elementType: 'labels.text.fill',
+                stylers: [{ color: '#d59563' }]
+              },
+              {
+                featureType: 'poi',
+                elementType: 'labels.text.fill',
+                stylers: [{ color: '#d59563' }]
+              },
+              {
+                featureType: 'poi.park',
+                elementType: 'geometry',
+                stylers: [{ color: '#263c3f' }]
+              },
+              {
+                featureType: 'poi.park',
+                elementType: 'labels.text.fill',
+                stylers: [{ color: '#6b9a76' }]
+              },
+              {
+                featureType: 'road',
+                elementType: 'geometry',
+                stylers: [{ color: '#38414e' }]
+              },
+              {
+                featureType: 'road',
+                elementType: 'geometry.stroke',
+                stylers: [{ color: '#212a37' }]
+              },
+              {
+                featureType: 'road',
+                elementType: 'labels.text.fill',
+                stylers: [{ color: '#9ca5b3' }]
+              },
+              {
+                featureType: 'road.highway',
+                elementType: 'geometry',
+                stylers: [{ color: '#746855' }]
+              },
+              {
+                featureType: 'road.highway',
+                elementType: 'geometry.stroke',
+                stylers: [{ color: '#1f2835' }]
+              },
+              {
+                featureType: 'road.highway',
+                elementType: 'labels.text.fill',
+                stylers: [{ color: '#f3d19c' }]
+              },
+              {
+                featureType: 'transit',
+                elementType: 'geometry',
+                stylers: [{ color: '#2f3948' }]
+              },
+              {
+                featureType: 'transit.station',
+                elementType: 'labels.text.fill',
+                stylers: [{ color: '#d59563' }]
+              },
+              {
+                featureType: 'water',
+                elementType: 'geometry',
+                stylers: [{ color: '#17263c' }]
+              },
+              {
+                featureType: 'water',
+                elementType: 'labels.text.fill',
+                stylers: [{ color: '#515c6d' }]
+              },
+              {
+                featureType: 'water',
+                elementType: 'labels.text.stroke',
+                stylers: [{ color: '#17263c' }]
+              }
+            ]
+          }
         }
+      },
+      mounted() {
+        axios.get('data/job.json').then(res => {
+          this.jobInfo = res.data.jobInfo
+        })
+        this.initMap()
       }
     })
   </script>

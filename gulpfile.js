@@ -19,7 +19,7 @@ gulp.task('sass', function() {
         outputStyle: 'compressed'
       })
     )
-    .pipe(gulp.dest('app/css')) // 指定編譯後的 css 檔案目錄
+    .pipe(gulp.dest('css')) // 指定編譯後的 css 檔案目錄
     .pipe(connect.reload()) // 當檔案異動後自動重新載入頁面
 })
 
